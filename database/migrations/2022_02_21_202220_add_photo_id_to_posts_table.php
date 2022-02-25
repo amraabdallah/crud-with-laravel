@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePostsTable extends Migration
+class AddPhotoIdToPostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreatePostsTable extends Migration
      */
     public function up()
     {
-       Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->string('title', 100);
-            $table->text('description');
-            $table->timestamps();
-            $table->string('slug')->nullable();
+        Schema::table('posts', function (Blueprint $table) {
+            $table->foreignId('photo_id')->nullable()->constrained('photos');
         });
     }
 
@@ -29,6 +25,8 @@ class CreatePostsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::table('posts', function (Blueprint $table) {
+            //
+        });
     }
 }

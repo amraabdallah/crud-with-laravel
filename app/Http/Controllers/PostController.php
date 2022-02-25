@@ -6,13 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Http\Requests\PostRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
     public function index(){
         // dd($posts);
         // $posts = Post::all();
-        $posts = Post::paginate(6);
+        $posts = Post::paginate(9);
 
         return view('posts.index',compact('posts'));
     }
@@ -20,19 +24,31 @@ class PostController extends Controller
 
     public function create(){
 
-        // dd(request()->all());
         $users = User::all();
-
+        // dd(request()->all());
 
         return view('posts.create',compact('users'));
     }
 
 
-    public function store(){
+    public function store(PostRequest $request){
+        // dd(request());
+        // dd($request->isDirty());
+        // Post::create(request()->all());
+        // dd(Post::where('id', $request->id)->exists());
+        // dd(Post::latest('id')->first()->id);
 
-        // dd(request()->all());
+        Post::create([
+            'title' => request()->title,
+            'description' => request()->description,
+            'user_id'=> request()->user_id,
+            'slug'=> Str::slug(request()->title),
+        ]);
 
-        Post::create(request()->all());
+
+        
+
+        // 'slug' => SlugService::createSlug(Post::class, 'slug', $request->title)
 
         return redirect('/posts');
     }
@@ -58,7 +74,26 @@ class PostController extends Controller
 
     public function update($update){
         // dd(request()->all());
-        Post::where('id', $update)->first()->update(request()->all());
+        // dd($update);
+
+        Validator::make(request()->all(), [
+            'title' =>['required',Rule::unique('posts')->ignore($update)], //ignore unique title on this id on update
+            'description'=>['required','min:10'],
+            'user_id'=>['required'],
+        ])->validate();
+
+
+        if(Post::where('id', $update)->exists()){ //if the inserted id exists on the database > proceed
+            Post::where('id', $update)->first()->update([
+                'title' => request()->title,
+                'description' => request()->description,
+                'user_id'=> request()->user_id,
+                'slug'=> Str::slug(request()->title),
+        ]);
+    }
+    else{
+        return abort(404);
+    }
 
         return redirect('/posts');
     }

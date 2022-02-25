@@ -14,6 +14,7 @@
                 <th scope="col">Title</th>
                 <th scope="col">Posted By</th>
                 <th scope="col">Created At</th>
+                <th scope="col">Slug</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -25,6 +26,7 @@
                     <td>{{$post->title}}</td>
                     <td>{{$post->user->name}}</td>
                     <td>{{$post->created_at}}</td>
+                    <td>{{$post->slug}}</td>
                     <td>
                       <div class="d-flex justify-content-center ">
                         <a href="{{route('post.show',$post->id)}}" type="button" class="btn btn-info">View</a>
