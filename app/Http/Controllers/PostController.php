@@ -10,6 +10,8 @@ use App\Http\Requests\PostRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use DataTables;
+
 
 class PostController extends Controller
 {
